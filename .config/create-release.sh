@@ -99,11 +99,11 @@ npm run build
 cd ..
 echo -e "${GREEN}✓ Frontend build completo${NC}\n"
 
-# Commit version bump and build (only if there are changes)
-echo -e "${GREEN}📦 Commitando mudanças...${NC}"
-git add cabinets-calculator.php frontend/dist
+# Commit version bump (only if there are changes)
+echo -e "${GREEN}📦 Commitando mudança de versão...${NC}"
+git add cabinets-calculator.php
 if git diff --staged --quiet; then
-    echo -e "${YELLOW}⚠️  Sem mudanças (já está em $VERSION)${NC}\n"
+    echo -e "${YELLOW}⚠️  Sem mudanças na versão (já está em $VERSION)${NC}\n"
 else
     git commit -m "chore: bump version to $VERSION"
 fi
