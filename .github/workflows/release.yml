@@ -68,6 +68,8 @@ jobs:
                     --exclude='frontend/tailwind.config.js' \
                     --exclude='frontend/components.json' \
                     --exclude='frontend/index.html' \
+                    --exclude='composer.json' \
+                    --exclude='composer.lock' \
                     --exclude='phpcs.xml' \
                     --exclude='.config/' \
                     --exclude='README.md'
