@@ -1,0 +1,21 @@
+{
+	"name": "blueprintcabinets/cabinets-calculator",
+	"description": "Kitchen Cabinet Pricing Estimator with React frontend",
+	"type": "wordpress-plugin",
+	"require": {
+		"php": ">=8.0",
+		"yahnis-elsts/plugin-update-checker": "^5.6"
+	},
+	"require-dev": {
+		"friendsofphp/php-cs-fixer": "^3.14",
+		"php-stubs/wordpress-stubs": "^6.8"
+	},
+	"scripts": {
+		"fix": "php-cs-fixer fix --config=.config/.php-cs-fixer.dist.php"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	}
+}
