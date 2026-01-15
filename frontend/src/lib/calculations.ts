@@ -15,21 +15,37 @@ import type {
 export function calculateEstimate(
 	formData: Pick<
 		KitchenEstimateForm,
-		"linearFeet" | "ceilingConfig" | "hasIsland" | "islandDimensions"
+		| "linearFeet"
+		| "ceilingConfig"
+		| "configurationType"
+		| "islandDimensions"
 	>
 ): PricingEstimate {
-	// Cabinet calculation
-	const config = CEILING_CONFIGS[formData.ceilingConfig as CeilingConfig];
-	const pricePerFoot = config?.pricePerFoot || 350;
-	const cabinetBase = formData.linearFeet * pricePerFoot;
-	const cabinetLow = Math.round(cabinetBase);
-	const cabinetHigh = Math.round(cabinetBase * 1.1); // 10% variance
+	// Cabinet calculation - only for kitchen/both configurations
+	let cabinetBase = 0;
+	let cabinetLow = 0;
+	let cabinetHigh = 0;
+
+	const needsCabinets =
+		formData.configurationType === "kitchen" ||
+		formData.configurationType === "both";
+
+	if (needsCabinets && formData.linearFeet && formData.ceilingConfig) {
+		const config = CEILING_CONFIGS[formData.ceilingConfig as CeilingConfig];
+		const pricePerFoot = config?.pricePerFoot || 350;
+		cabinetBase = formData.linearFeet * pricePerFoot;
+		cabinetLow = Math.round(cabinetBase);
+		cabinetHigh = Math.round(cabinetBase); // Exact price, no variance
+	}
 
 	// Island calculation
 	let islandPrice = 0;
 	let islandDimensions = "";
 
-	if (formData.hasIsland && formData.islandDimensions) {
+	const needsIsland =
+		formData.configurationType === "island" ||
+		formData.configurationType === "both";
+	if (needsIsland && formData.islandDimensions) {
 		const { length, width } = formData.islandDimensions;
 		const key = `${length}x${width}`;
 		islandPrice = ISLAND_PRICES[key] || 0;
@@ -42,28 +58,40 @@ export function calculateEstimate(
 
 	// Accuracy warning based on linear footage
 	let accuracyWarning: string | undefined;
-	if (formData.linearFeet < 10) {
+	if (formData.linearFeet && formData.linearFeet < 10) {
 		accuracyWarning =
 			"Small kitchens (under 10 LF) may have higher per-foot costs. This estimate may be conservative.";
-	} else if (formData.linearFeet > 40) {
+	} else if (formData.linearFeet && formData.linearFeet > 40) {
 		accuracyWarning =
 			"Large kitchens (over 40 LF) may require custom pricing. We recommend scheduling a consultation for accurate pricing.";
 	}
 
+	// Get pricePerFoot for return value
+	const returnPricePerFoot =
+		needsCabinets && formData.ceilingConfig
+			? CEILING_CONFIGS[formData.ceilingConfig as CeilingConfig]
+					?.pricePerFoot || 350
+			: 0;
+
 	return {
-		cabinet: {
-			linearFeet: formData.linearFeet,
-			pricePerFoot,
-			subtotalLow: cabinetLow,
-			subtotalHigh: cabinetHigh,
-		},
-		...(formData.hasIsland &&
-			islandPrice > 0 && {
-				island: {
-					dimensions: islandDimensions,
-					price: islandPrice,
-				},
-			}),
+		...(needsCabinets
+			? {
+					cabinet: {
+						linearFeet: formData.linearFeet || 0,
+						pricePerFoot: returnPricePerFoot,
+						subtotalLow: cabinetLow,
+						subtotalHigh: cabinetHigh,
+					},
+			  }
+			: {}),
+		...(needsIsland && islandPrice > 0
+			? {
+					island: {
+						dimensions: islandDimensions,
+						price: islandPrice,
+					},
+			  }
+			: {}),
 		total: {
 			low: totalLow,
 			high: totalHigh,

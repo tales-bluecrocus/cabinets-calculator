@@ -1,10 +1,5 @@
 // Kitchen layout types
-export type LayoutType =
-	| "l-shape"
-	| "u-shape"
-	| "galley"
-	| "single-wall"
-	| "other";
+export type LayoutType = "l-shape" | "u-shape" | "galley" | "single-wall";
 
 // Ceiling configuration types
 export type CeilingConfig =
@@ -18,17 +13,20 @@ export type CeilingConfig =
 export type IslandLength = number;
 export type IslandWidth = number;
 
+// Configuration type (what to include)
+export type ConfigurationType = "kitchen" | "island" | "both";
+
 // Form data structure
 export interface KitchenEstimateForm {
-	// Step 1
-	layoutType: LayoutType;
-	linearFeet: number;
+	// Step 1 - Optional for island-only
+	layoutType?: LayoutType;
+	linearFeet?: number;
 
-	// Step 2
-	ceilingConfig: CeilingConfig;
+	// Step 2 - Optional for island-only
+	ceilingConfig?: CeilingConfig;
 
 	// Step 3
-	hasIsland: boolean;
+	configurationType: ConfigurationType;
 	islandDimensions?: {
 		length: IslandLength;
 		width: IslandWidth;
@@ -48,7 +46,7 @@ export interface CustomerInfo {
 
 // Calculated estimate result
 export interface PricingEstimate {
-	cabinet: {
+	cabinet?: {
 		linearFeet: number;
 		pricePerFoot: number;
 		subtotalLow: number;
@@ -80,15 +78,16 @@ export interface LayoutTypeDetails {
 	label: string;
 	description: string;
 	icon?: string;
+	image?: string;
 	measurementTip: string;
 }
 
 // Quote submission request
 export interface QuoteSubmissionRequest {
-	layoutType: LayoutType;
-	linearFeet: number;
-	ceilingConfig: CeilingConfig;
-	hasIsland: boolean;
+	layoutType?: LayoutType;
+	linearFeet?: number;
+	ceilingConfig?: CeilingConfig;
+	configurationType: ConfigurationType;
 	islandDimensions?: {
 		length: IslandLength;
 		width: IslandWidth;

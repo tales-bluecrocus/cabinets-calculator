@@ -7,9 +7,10 @@ interface ProgressStepperProps {
 }
 
 const STEP_LABELS = [
-	"Measure Your Kitchen",
-	"Ceiling Configuration",
-	"Island & Results",
+	"Configuration",
+	"Layout & Size",
+	"Ceiling & Island",
+	"Review & Submit",
 ];
 
 export function ProgressStepper({

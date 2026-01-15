@@ -1,39 +1,45 @@
 import { z } from "zod";
 
-
 export const kitchenEstimateSchema = z
 	.object({
-		// Step 1
-		layoutType: z.enum(
-			["l-shape", "u-shape", "galley", "single-wall", "other"],
-			{
+		// Step 1 - Optional for island-only configurations
+		layoutType: z
+			.enum(["l-shape", "u-shape", "galley", "single-wall"], {
 				required_error: "Please select your kitchen layout",
-			}
-		),
+			})
+			.optional(),
 		linearFeet: z
 			.number({
 				required_error: "Please enter linear footage",
 				invalid_type_error: "Please enter a valid number",
 			})
+			.int("Linear feet must be a whole number")
 			.min(5, "Minimum 5 linear feet required")
-			.max(150, "For kitchens over 150 LF, please contact us"),
+			.max(150, "For kitchens over 150 LF, please contact us")
+			.optional(),
 
-		// Step 2
-		ceilingConfig: z.enum(
-			[
-				"8ft-open",
-				"8ft-crown",
-				"8ft-ceiling",
-				"9ft-ceiling",
-				"10ft-ceiling",
-			],
-			{
-				required_error: "Please select a ceiling configuration",
-			}
-		),
+		// Step 2 - Optional for island-only configurations
+		ceilingConfig: z
+			.enum(
+				[
+					"8ft-open",
+					"8ft-crown",
+					"8ft-ceiling",
+					"9ft-ceiling",
+					"10ft-ceiling",
+				],
+				{
+					required_error: "Please select a ceiling configuration",
+				}
+			)
+			.optional(),
 
 		// Step 3
-		hasIsland: z.boolean().default(false),
+		configurationType: z
+			.enum(["kitchen", "island", "both"], {
+				required_error: "Please select what to include",
+			})
+			.default("both"),
 		islandDimensions: z
 			.object({
 				length: z.number().min(4).max(10),
@@ -59,8 +65,63 @@ export const kitchenEstimateSchema = z
 	})
 	.refine(
 		(data) => {
+			// Kitchen-only and Both require layoutType
+			if (
+				(data.configurationType === "kitchen" ||
+					data.configurationType === "both") &&
+				!data.layoutType
+			) {
+				return false;
+			}
+			return true;
+		},
+		{
+			message: "Please select your kitchen layout",
+			path: ["layoutType"],
+		}
+	)
+	.refine(
+		(data) => {
+			// Kitchen-only and Both require linearFeet
+			if (
+				(data.configurationType === "kitchen" ||
+					data.configurationType === "both") &&
+				!data.linearFeet
+			) {
+				return false;
+			}
+			return true;
+		},
+		{
+			message: "Please enter linear footage",
+			path: ["linearFeet"],
+		}
+	)
+	.refine(
+		(data) => {
+			// Kitchen-only and Both require ceilingConfig
+			if (
+				(data.configurationType === "kitchen" ||
+					data.configurationType === "both") &&
+				!data.ceilingConfig
+			) {
+				return false;
+			}
+			return true;
+		},
+		{
+			message: "Please select a ceiling configuration",
+			path: ["ceilingConfig"],
+		}
+	)
+	.refine(
+		(data) => {
 			// If island is selected, dimensions must be provided
-			if (data.hasIsland && !data.islandDimensions) {
+			if (
+				(data.configurationType === "island" ||
+					data.configurationType === "both") &&
+				!data.islandDimensions
+			) {
 				return false;
 			}
 			return true;

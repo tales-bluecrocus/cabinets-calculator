@@ -64,32 +64,30 @@ export const LAYOUT_TYPES: Record<LayoutType, LayoutTypeDetails> = {
 	"l-shape": {
 		label: "L-Shaped",
 		description: "Two walls forming an L shape",
+		image: "/wp-content/plugins/cabinets-calculator/frontend/src/images/Lshape.webp",
 		measurementTip:
 			"Measure both walls from corner to end. Example: 10ft + 8ft = 18 linear feet",
 	},
 	"u-shape": {
 		label: "U-Shaped",
 		description: "Three walls forming a U shape",
+		image: "/wp-content/plugins/cabinets-calculator/frontend/src/images/Ushape.webp",
 		measurementTip:
 			"Measure all three walls. Example: 10ft + 6ft + 10ft = 26 linear feet",
 	},
 	galley: {
 		label: "Galley",
 		description: "Two parallel walls",
+		image: "/wp-content/plugins/cabinets-calculator/frontend/src/images/double.webp",
 		measurementTip:
 			"Measure both parallel walls. Example: 12ft + 12ft = 24 linear feet",
 	},
 	"single-wall": {
 		label: "Single Wall",
 		description: "Cabinets along one wall",
+		image: "/wp-content/plugins/cabinets-calculator/frontend/src/images/single.webp",
 		measurementTip:
 			"Measure the full wall length. Example: 15ft = 15 linear feet",
-	},
-	other: {
-		label: "Other/Complex",
-		description: "Custom or complex layout",
-		measurementTip:
-			"Measure all walls where cabinets will be installed and add them together.",
 	},
 } as const;
 

@@ -8,14 +8,18 @@ import { LAYOUT_TYPES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import type { KitchenEstimateFormData } from "@/lib/validation";
 import type { LayoutType } from "@/types/estimator";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { InlineToasts } from "@/components/ui/toast";
 
 interface StepLayoutMeasurementProps {
 	onNext: () => void;
+	onBack: () => void;
 }
 
-export function StepLayoutMeasurement({ onNext }: StepLayoutMeasurementProps) {
+export function StepLayoutMeasurement({
+	onNext,
+	onBack,
+}: StepLayoutMeasurementProps) {
 	const { watch, setValue } = useFormContext<KitchenEstimateFormData>();
 
 	const selectedLayout = watch("layoutType");
@@ -26,7 +30,7 @@ export function StepLayoutMeasurement({ onNext }: StepLayoutMeasurementProps) {
 		typeof linearFeet === "number" &&
 		!isNaN(linearFeet) &&
 		linearFeet > 0 &&
-		(linearFeet < 10 || linearFeet > 120);
+		(linearFeet < 10 || linearFeet > 40);
 
 	const layoutOptions = Object.entries(LAYOUT_TYPES) as [
 		LayoutType,
@@ -50,19 +54,26 @@ export function StepLayoutMeasurement({ onNext }: StepLayoutMeasurementProps) {
 				<Label className="text-base md:text-lg font-medium">
 					What's your kitchen layout?
 				</Label>
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
 					{layoutOptions.map(([key, layout]) => (
 						<button
 							key={key}
 							type="button"
 							onClick={() => setValue("layoutType", key)}
 							className={cn(
-								"p-4 md:p-5 rounded-lg border-2 text-left transition-all min-h-[80px] md:min-h-[90px]",
+								"p-4 md:p-5 rounded-lg border-2 text-left transition-all min-h-[120px] md:min-h-[140px] flex flex-col",
 								selectedLayout === key
 									? "border-primary bg-primary/5"
 									: "border-border bg-background hover:border-primary/50 active:bg-primary/5"
 							)}
 						>
+							{layout.image && (
+								<img
+									src={layout.image}
+									alt={layout.label}
+									className="w-full h-20 object-contain mb-3 rounded"
+								/>
+							)}
 							<div className="font-medium text-sm md:text-base">
 								{layout.label}
 							</div>
@@ -96,8 +107,7 @@ export function StepLayoutMeasurement({ onNext }: StepLayoutMeasurementProps) {
 				</div>
 
 				<Slider
-					value={[linearFeet]}
-					min={5}
+					value={[linearFeet || 15]}
 					max={150}
 					step={1}
 					showTooltip
@@ -129,12 +139,22 @@ export function StepLayoutMeasurement({ onNext }: StepLayoutMeasurementProps) {
 			<InlineToasts />
 
 			{/* Navigation */}
-			<div className="flex justify-end pt-6">
+			<div className="flex flex-col sm:flex-row gap-3 sm:justify-between pt-6">
+				<Button
+					type="button"
+					variant="outline"
+					onClick={onBack}
+					size="lg"
+					className="w-full sm:w-auto min-h-[48px] order-2 sm:order-1"
+				>
+					<ArrowLeft className="mr-2 h-4 w-4" />
+					Back
+				</Button>
 				<Button
 					type="button"
 					onClick={onNext}
 					size="lg"
-					className="w-full sm:w-auto min-h-[48px] text-base"
+					className="w-full sm:w-auto min-h-[48px] text-base order-1 sm:order-2"
 				>
 					Next Step
 					<ArrowRight className="ml-2 h-4 w-4" />

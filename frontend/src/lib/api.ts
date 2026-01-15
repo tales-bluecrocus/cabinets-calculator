@@ -36,16 +36,58 @@ export async function submitQuoteRequest(
 	const apiUrl = getApiUrl();
 
 	try {
+		// Transform configurationType to hasIsland for backend compatibility
+		const backendData = {
+			...data,
+			hasIsland:
+				data.configurationType === "island" ||
+				data.configurationType === "both",
+		};
+
+		console.log("Submitting quote request:", backendData);
+
 		const response = await fetch(`${apiUrl}submit-quote`, {
 			method: "POST",
 			headers: getHeaders(),
-			body: JSON.stringify(data),
+			body: JSON.stringify(backendData),
 		});
 
+		console.log("Response status:", response.status);
+		console.log("Response headers:", response.headers);
+
+		// Check content type before parsing
+		const contentType = response.headers.get("content-type");
+
 		if (!response.ok) {
-			const errorData = await response.json().catch(() => ({}));
+			let errorData;
+
+			if (contentType && contentType.includes("application/json")) {
+				errorData = await response.json().catch(() => ({}));
+			} else {
+				const textResponse = await response.text();
+				console.error(
+					"Non-JSON response:",
+					textResponse.substring(0, 500)
+				);
+				throw new Error(
+					`Server error (${response.status}): Please check if the WordPress REST API is accessible`
+				);
+			}
+
 			throw new Error(
 				errorData.message || "Failed to submit quote request"
+			);
+		}
+
+		// Even on 200, check if response is actually JSON
+		if (!contentType || !contentType.includes("application/json")) {
+			const textResponse = await response.text();
+			console.error(
+				"Expected JSON but got:",
+				textResponse.substring(0, 1000)
+			);
+			throw new Error(
+				"Server returned invalid response format. There may be a PHP error."
 			);
 		}
 

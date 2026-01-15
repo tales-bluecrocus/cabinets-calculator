@@ -8,6 +8,7 @@ import {
 import { calculateEstimate } from "@/lib/calculations";
 import { submitQuoteRequest } from "@/lib/api";
 import { ProgressStepper } from "@/components/calculator/ProgressStepper";
+import { StepInitialSelection } from "@/components/calculator/FormSteps/StepInitialSelection";
 import { StepLayoutMeasurement } from "@/components/calculator/FormSteps/StepLayoutMeasurement";
 import { StepCeilingConfig } from "@/components/calculator/FormSteps/StepCeilingConfig";
 import { StepIslandResults } from "@/components/calculator/FormSteps/StepIslandResults";
@@ -22,7 +23,7 @@ import { useToast, ToastProvider } from "@/components/ui/toast";
 import type { PricingEstimate } from "@/types/estimator";
 
 function AppContent() {
-	const [currentStep, setCurrentStep] = useState(1);
+	const [currentStep, setCurrentStep] = useState(0);
 	const [estimate, setEstimate] = useState<PricingEstimate | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitStatus, setSubmitStatus] = useState<{
@@ -38,8 +39,8 @@ function AppContent() {
 			layoutType: undefined,
 			linearFeet: 15,
 			ceilingConfig: undefined,
-			hasIsland: false,
-			islandDimensions: undefined,
+			configurationType: "both",
+			islandDimensions: { length: 6, width: 3 },
 			customerInfo: {
 				name: "",
 				email: "",
@@ -51,16 +52,73 @@ function AppContent() {
 		mode: "onChange",
 	});
 
-	const { trigger, getValues } = methods;
+	const { trigger, getValues, watch } = methods;
+
+	// Get the current configuration type
+	const configurationType = watch("configurationType");
+
+	// Helper function to determine the next step based on configuration type
+	const getNextStep = (currentStep: number): number => {
+		// Step 0 -> Determine next based on configuration
+		if (currentStep === 0) {
+			// Island Only skips kitchen layout (step 1)
+			if (configurationType === "island") {
+				return 2;
+			}
+			// Kitchen Only and Both go to layout selection
+			return 1;
+		}
+		// Step 1 -> Always go to step 2
+		if (currentStep === 1) {
+			return 2;
+		}
+		// Step 2 -> Always go to step 3 (results)
+		if (currentStep === 2) {
+			return 3;
+		}
+		return currentStep + 1;
+	};
+
+	// Helper function to determine the previous step
+	const getPrevStep = (currentStep: number): number => {
+		// Step 2 -> Go back based on configuration
+		if (currentStep === 2) {
+			// Island Only goes back to step 0
+			if (configurationType === "island") {
+				return 0;
+			}
+			// Kitchen Only and Both go back to step 1
+			return 1;
+		}
+		// Step 1 -> Always go back to step 0
+		if (currentStep === 1) {
+			return 0;
+		}
+		return Math.max(currentStep - 1, 0);
+	};
 
 	// Calculate estimate when relevant values change
 	const updateEstimate = useCallback(() => {
 		const values = getValues();
-		if (values.linearFeet && values.ceilingConfig) {
+
+		// For island only, only island dimensions are needed
+		if (values.configurationType === "island") {
+			if (values.islandDimensions) {
+				const newEstimate = calculateEstimate({
+					linearFeet: undefined,
+					ceilingConfig: undefined,
+					configurationType: values.configurationType,
+					islandDimensions: values.islandDimensions,
+				});
+				setEstimate(newEstimate);
+			}
+		}
+		// For kitchen only or both, need kitchen fields
+		else if (values.linearFeet && values.ceilingConfig) {
 			const newEstimate = calculateEstimate({
 				linearFeet: values.linearFeet,
 				ceilingConfig: values.ceilingConfig,
-				hasIsland: values.hasIsland || false,
+				configurationType: values.configurationType || "both",
 				islandDimensions: values.islandDimensions,
 			});
 			setEstimate(newEstimate);
@@ -72,11 +130,24 @@ function AppContent() {
 		let errorMessages: string[] = [];
 
 		switch (currentStep) {
+			case 0:
+				// Step 0: Just configuration type selection, no validation needed
+				break;
 			case 1:
-				fieldsToValidate = ["layoutType"];
+				// Step 1: Layout selection (only for kitchen/both)
+				if (
+					configurationType === "kitchen" ||
+					configurationType === "both"
+				) {
+					fieldsToValidate = ["layoutType"];
+				}
 				break;
 			case 2:
-				fieldsToValidate = ["ceilingConfig"];
+				// Step 2: Ceiling config (for kitchen/both) or island dimensions (for island/both)
+				if (configurationType !== "island") {
+					fieldsToValidate = ["ceilingConfig"];
+				}
+				// Island dimensions validation happens automatically through schema
 				break;
 		}
 
@@ -103,10 +174,13 @@ function AppContent() {
 			return;
 		}
 
-		if (currentStep === 2) {
+		if (currentStep === 3) {
 			updateEstimate();
 		}
-		setCurrentStep((prev) => Math.min(prev + 1, 3));
+
+		// Use conditional navigation based on configuration type
+		const nextStep = getNextStep(currentStep);
+		setCurrentStep(nextStep);
 
 		// Scroll to top of the card
 		const cardElement = document.querySelector(
@@ -118,7 +192,8 @@ function AppContent() {
 	};
 
 	const handlePrevStep = () => {
-		setCurrentStep((prev) => Math.max(prev - 1, 1));
+		const prevStep = getPrevStep(currentStep);
+		setCurrentStep(prevStep);
 
 		// Scroll to top of the card
 		const cardElement = document.querySelector(
@@ -160,7 +235,7 @@ function AppContent() {
 				layoutType: data.layoutType,
 				linearFeet: data.linearFeet,
 				ceilingConfig: data.ceilingConfig,
-				hasIsland: data.hasIsland,
+				configurationType: data.configurationType,
 				islandDimensions: data.islandDimensions,
 				estimate,
 				customerInfo: data.customerInfo,
@@ -212,16 +287,21 @@ function AppContent() {
 				</CardHeader>
 
 				<CardContent className="p-4 md:p-6">
-					<ProgressStepper currentStep={currentStep} totalSteps={3} />
+					<ProgressStepper currentStep={currentStep} totalSteps={4} />
 
 					<FormProvider {...methods}>
 						<form
 							onSubmit={methods.handleSubmit(handleSubmit)}
 							noValidate
 						>
+							{currentStep === 0 && (
+								<StepInitialSelection onNext={handleNextStep} />
+							)}
+
 							{currentStep === 1 && (
 								<StepLayoutMeasurement
 									onNext={handleNextStep}
+									onBack={handlePrevStep}
 								/>
 							)}
 

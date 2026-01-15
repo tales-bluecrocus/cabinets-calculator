@@ -45,7 +45,8 @@ export function StepIslandResults({
 	} = useFormContext<KitchenEstimateFormData>();
 
 	const { addToast } = useToast();
-	const hasIsland = watch("hasIsland");
+	const configurationType = watch("configurationType");
+	const islandDimensions = watch("islandDimensions");
 
 	// Show error toast when submission fails
 	useEffect(() => {
@@ -53,13 +54,12 @@ export function StepIslandResults({
 			addToast({ type: "error", message: submitStatus.message });
 		}
 	}, [submitStatus, addToast]);
-	const islandDimensions = watch("islandDimensions");
 	const customerInfo = watch("customerInfo");
 
 	// Update estimate when island selection changes
 	useEffect(() => {
 		onEstimateUpdate();
-	}, [hasIsland, islandDimensions, onEstimateUpdate]);
+	}, [configurationType, islandDimensions, onEstimateUpdate]);
 
 	if (submitStatus?.success) {
 		return (
@@ -69,6 +69,21 @@ export function StepIslandResults({
 				<p className="text-muted-foreground mb-6">
 					{submitStatus.message}
 				</p>
+
+				{estimate && (
+					<div className="bg-primary/5 border border-primary/20 rounded-lg p-6 max-w-md mx-auto mb-6">
+						<h3 className="font-semibold text-lg mb-2">
+							Your Estimate
+						</h3>
+						<p className="text-3xl font-bold text-primary">
+							${estimate.total.low.toLocaleString()}
+						</p>
+						<p className="text-xs text-muted-foreground mt-2">
+							A detailed quote has been sent to your email
+						</p>
+					</div>
+				)}
+
 				<div className="bg-muted rounded-lg p-6 max-w-md mx-auto">
 					<h3 className="font-semibold mb-2">What happens next?</h3>
 					<ul className="text-sm text-left space-y-2 text-muted-foreground">
@@ -131,7 +146,8 @@ export function StepIslandResults({
 							<span className="block text-muted-foreground">
 								Kitchen Island
 							</span>
-							{watch("hasIsland") ? (
+							{configurationType === "both" ||
+							configurationType === "island" ? (
 								<span className="font-medium">
 									{watch("islandDimensions")?.length}' x{" "}
 									{watch("islandDimensions")?.width}'
@@ -151,26 +167,30 @@ export function StepIslandResults({
 			{/* Hidden fields for estimate data - sent via email only */}
 			{estimate && (
 				<>
-					<input
-						type="hidden"
-						name="estimate_linear_feet"
-						value={estimate.cabinet.linearFeet}
-					/>
-					<input
-						type="hidden"
-						name="estimate_price_per_foot"
-						value={estimate.cabinet.pricePerFoot}
-					/>
-					<input
-						type="hidden"
-						name="estimate_cabinet_low"
-						value={estimate.cabinet.subtotalLow}
-					/>
-					<input
-						type="hidden"
-						name="estimate_cabinet_high"
-						value={estimate.cabinet.subtotalHigh}
-					/>
+					{estimate.cabinet && (
+						<>
+							<input
+								type="hidden"
+								name="estimate_linear_feet"
+								value={estimate.cabinet.linearFeet}
+							/>
+							<input
+								type="hidden"
+								name="estimate_price_per_foot"
+								value={estimate.cabinet.pricePerFoot}
+							/>
+							<input
+								type="hidden"
+								name="estimate_cabinet_low"
+								value={estimate.cabinet.subtotalLow}
+							/>
+							<input
+								type="hidden"
+								name="estimate_cabinet_high"
+								value={estimate.cabinet.subtotalHigh}
+							/>
+						</>
+					)}
 					<input
 						type="hidden"
 						name="estimate_total_low"
