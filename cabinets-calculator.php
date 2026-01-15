@@ -32,11 +32,6 @@ if (file_exists($update_checker_path)) {
 	});
 }
 
-// Load debug helper (remove in production)
-if (file_exists(CABINETS_CALC_PLUGIN_DIR . 'debug-update.php')) {
-	require_once CABINETS_CALC_PLUGIN_DIR . 'debug-update.php';
-}
-
 /**
  * Main Plugin Class
  */
