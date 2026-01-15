@@ -20,16 +20,21 @@ define('CABINETS_CALC_VERSION', '0.0.5');
 define('CABINETS_CALC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('CABINETS_CALC_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-// Load Plugin Update Checker
-$update_checker_path = CABINETS_CALC_PLUGIN_DIR . 'vendor/plugin-update-checker/plugin-update-checker.php';
+// Load Plugin Update Checker (installed via Composer)
+$update_checker_path = CABINETS_CALC_PLUGIN_DIR . 'vendor/yahnis-elsts/plugin-update-checker/load-v5p6.php';
 if (file_exists($update_checker_path)) {
 	require_once $update_checker_path;
 	require_once CABINETS_CALC_PLUGIN_DIR . 'backend/update-checker.php';
 } else {
 	// Show warning if update checker is not available
 	add_action('admin_notices', function () {
-		echo '<div class="notice notice-warning"><p><strong>Cabinets Calculator:</strong> Update checker not loaded. Please reinstall the plugin.</p></div>';
+		echo '<div class="notice notice-error"><p><strong>Cabinets Calculator:</strong> Update checker library not found. Plugin updates will not work.</p></div>';
 	});
+}
+
+// Load debug helper (remove in production)
+if (file_exists(CABINETS_CALC_PLUGIN_DIR . 'debug-update.php')) {
+	require_once CABINETS_CALC_PLUGIN_DIR . 'debug-update.php';
 }
 
 /**
