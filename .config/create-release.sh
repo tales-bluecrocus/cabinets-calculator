@@ -6,7 +6,7 @@
 set -e  # Exit on error
 
 # Get plugin root directory (parent of .config)
-PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")'/.." && pwd)"
+PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PLUGIN_DIR"
 
 # Colors for output
