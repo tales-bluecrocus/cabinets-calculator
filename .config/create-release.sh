@@ -78,9 +78,11 @@ echo -e "${GREEN}📝 Atualizando versão no cabinets-calculator.php...${NC}"
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS
     sed -i '' "s/Version: .*/Version: $VERSION/" cabinets-calculator.php
+    sed -i '' "s/define('CABINETS_CALC_VERSION', '.*');/define('CABINETS_CALC_VERSION', '$VERSION');/" cabinets-calculator.php
 else
     # Linux
     sed -i "s/Version: .*/Version: $VERSION/" cabinets-calculator.php
+    sed -i "s/define('CABINETS_CALC_VERSION', '.*');/define('CABINETS_CALC_VERSION', '$VERSION');/" cabinets-calculator.php
 fi
 
 # Verify the change
