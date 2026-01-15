@@ -1,12 +1,17 @@
 <?php
 
+// Prevent direct access
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 // Initialize the update checker for GitHub
 $myUpdateChecker = PucFactory::buildUpdateChecker(
     'https://github.com/tales-bluecrocus/cabinets-calculator/',
-    CABINETS_CALC_PLUGIN_DIR . 'cabinets-calculator.php',
-    'cabinets-calculator',
+    __FILE__,
+    'cabinets-calculator/cabinets-calculator.php'
 );
 
 // Set the branch to check for updates
@@ -14,6 +19,9 @@ $myUpdateChecker->setBranch('main');
 
 // Enable release assets - uses GitHub Releases instead of branch ZIP
 $myUpdateChecker->getVcsApi()->enableReleaseAssets();
+
+// Check for updates more frequently (every hour) - default is 12 hours
+$myUpdateChecker->checkPeriod = 1;
 
 // Fix the folder name during update installation
 add_filter('upgrader_source_selection', function ($source, $remote_source, $upgrader, $hook_extra) {

@@ -25,6 +25,11 @@ $update_checker_path = CABINETS_CALC_PLUGIN_DIR . 'vendor/plugin-update-checker/
 if (file_exists($update_checker_path)) {
 	require_once $update_checker_path;
 	require_once CABINETS_CALC_PLUGIN_DIR . 'backend/update-checker.php';
+} else {
+	// Show warning if update checker is not available
+	add_action('admin_notices', function () {
+		echo '<div class="notice notice-warning"><p><strong>Cabinets Calculator:</strong> Update checker not loaded. Please reinstall the plugin.</p></div>';
+	});
 }
 
 /**
