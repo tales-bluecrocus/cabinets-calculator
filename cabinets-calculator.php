@@ -4,7 +4,7 @@
  * Plugin Name: BluePrint Cabinets Calculator
  * Plugin URI: https://blueprintcabinets.com
  * Description: Kitchen Cabinet Pricing Estimator with React frontend and Postmark email integration
- * Version: 0.0.9
+ * Version: 0.1.0
  * Author: BluePrint Cabinets
  * License: GPL v2 or later
  * Text Domain: cabinets-calculator
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Core constants
-define('CABINETS_CALC_VERSION', '0.0.9');
+define('CABINETS_CALC_VERSION', '0.1.0');
 define('CABINETS_CALC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('CABINETS_CALC_PLUGIN_URL', plugin_dir_url(__FILE__));
 
