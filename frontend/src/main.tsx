@@ -3,16 +3,6 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
-// Get WordPress config if available
-declare global {
-	interface Window {
-		cabinetsCalculatorConfig?: {
-			restUrl: string;
-			nonce: string;
-		};
-	}
-}
-
 const rootElement = document.getElementById("cabinet-calculator-root");
 
 if (rootElement) {

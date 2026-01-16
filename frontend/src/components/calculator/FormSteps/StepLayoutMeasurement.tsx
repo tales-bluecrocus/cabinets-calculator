@@ -34,7 +34,7 @@ export function StepLayoutMeasurement({
 
 	const layoutOptions = Object.entries(LAYOUT_TYPES) as [
 		LayoutType,
-		(typeof LAYOUT_TYPES)[LayoutType]
+		(typeof LAYOUT_TYPES)[LayoutType],
 	][];
 
 	return (
@@ -54,7 +54,7 @@ export function StepLayoutMeasurement({
 				<Label className="text-base md:text-lg font-medium">
 					What's your kitchen layout?
 				</Label>
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
 					{layoutOptions.map(([key, layout]) => (
 						<button
 							key={key}

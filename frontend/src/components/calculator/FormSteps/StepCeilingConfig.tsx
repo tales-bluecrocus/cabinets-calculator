@@ -65,7 +65,7 @@ export function StepCeilingConfig({
 
 	const ceilingOptions = Object.entries(CEILING_CONFIGS) as [
 		CeilingConfig,
-		(typeof CEILING_CONFIGS)[CeilingConfig]
+		(typeof CEILING_CONFIGS)[CeilingConfig],
 	][];
 
 	return (
@@ -126,18 +126,18 @@ export function StepCeilingConfig({
 					<Label className="text-base font-medium">
 						Island Dimensions
 					</Label>
-					<div className="p-4 bg-muted/30 rounded-lg border border-border space-y-6">
-						<div className="space-y-6 animate-in slide-in-from-top-2">
-							<div className="flex justify-between items-center mb-2">
-								{islandDimensions && (
+					<div className="p-4 bg-muted/30 rounded-lg border border-border space-y-4">
+						<div className="animate-in slide-in-from-top-2">
+							{islandDimensions && (
+								<div className="mb-4">
 									<span className="text-sm font-medium text-primary bg-primary/10 px-2 py-1 rounded">
 										{islandDimensions.length}' x{" "}
 										{islandDimensions.width}'
 									</span>
-								)}
-							</div>
-							<div className="flex justify-between items-center mb-2 space-y-6">
-								<div className="space-y-4 w-full mr-2">
+								</div>
+							)}
+							<div className="grid grid-cols-2 gap-4">
+								<div className="space-y-2">
 									<Label>Length (ft)</Label>
 									<Select
 										value={String(
@@ -174,7 +174,7 @@ export function StepCeilingConfig({
 									</Select>
 								</div>
 
-								<div className="space-y-4 w-full ml-2">
+								<div className="space-y-2">
 									<Label>Width (ft)</Label>
 									<Select
 										value={String(
