@@ -56,22 +56,29 @@ export function StepLayoutMeasurement({
 				</Label>
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
 					{layoutOptions.map(([key, layout]) => (
-						<button
+						<div
 							key={key}
-							type="button"
+							role="button"
+							tabIndex={0}
 							onClick={() => setValue("layoutType", key)}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" || e.key === " ") {
+									e.preventDefault();
+									setValue("layoutType", key);
+								}
+							}}
 							className={cn(
-								"p-4 md:p-5 rounded-lg border-2 text-left transition-all min-h-[120px] md:min-h-[140px] flex flex-col",
+								"p-6 md:p-8 rounded-xl border-2 border-solid text-center transition-all cursor-pointer bg-white shadow-sm",
 								selectedLayout === key
-									? "border-primary bg-primary/5"
-									: "border-border bg-background hover:border-primary/50 active:bg-primary/5"
+									? "border-primary bg-primary/10 shadow-lg"
+									: "border-gray-300 hover:border-primary/50 hover:shadow-md"
 							)}
 						>
 							{layout.image && (
 								<img
 									src={layout.image}
 									alt={layout.label}
-									className="w-full h-20 object-contain mb-3 rounded"
+									className="w-full h-20 object-contain mb-3 rounded-md"
 								/>
 							)}
 							<div className="font-medium text-sm md:text-base">
@@ -80,7 +87,7 @@ export function StepLayoutMeasurement({
 							<div className="text-muted-foreground text-xs md:text-sm mt-1">
 								{layout.description}
 							</div>
-						</button>
+						</div>
 					))}
 				</div>
 			</div>

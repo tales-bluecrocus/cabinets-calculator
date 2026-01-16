@@ -76,17 +76,24 @@ export function StepInitialSelection({ onNext }: StepInitialSelectionProps) {
 				<Label className="sr-only">Select configuration type</Label>
 				<div className="grid grid-cols-1 gap-4">
 					{options.map((option) => (
-						<button
+						<div
 							key={option.value}
-							type="button"
+							role="button"
+							tabIndex={0}
 							onClick={() =>
 								handleConfigurationChange(option.value)
 							}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" || e.key === " ") {
+									e.preventDefault();
+									handleConfigurationChange(option.value);
+								}
+							}}
 							className={cn(
-								"p-6 md:p-8 rounded-xl border-2 text-center transition-all",
+								"p-6 md:p-8 rounded-xl border-2 border-solid text-center transition-all cursor-pointer bg-white shadow-sm",
 								configurationType === option.value
 									? "border-primary bg-primary/10 shadow-lg"
-									: "border-border bg-background hover:border-primary/50 hover:shadow-md"
+									: "border-gray-300 hover:border-primary/50 hover:shadow-md"
 							)}
 						>
 							<div className="font-bold text-lg md:text-xl mb-2">
@@ -95,7 +102,7 @@ export function StepInitialSelection({ onNext }: StepInitialSelectionProps) {
 							<div className="text-muted-foreground text-sm md:text-base">
 								{option.description}
 							</div>
-						</button>
+						</div>
 					))}
 				</div>
 			</div>

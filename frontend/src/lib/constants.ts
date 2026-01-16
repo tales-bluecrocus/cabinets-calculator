@@ -65,28 +65,28 @@ export const LAYOUT_TYPES: Record<LayoutType, LayoutTypeDetails> = {
 	"l-shape": {
 		label: "L-Shaped",
 		description: "Two walls forming an L shape",
-		image: getAssetUrl("Lshape.webp"),
+		image: getAssetUrl("Lshape.png"),
 		measurementTip:
 			"Measure both walls from corner to end. Example: 10ft + 8ft = 18 linear feet",
 	},
 	"u-shape": {
 		label: "U-Shaped",
 		description: "Three walls forming a U shape",
-		image: getAssetUrl("Ushape.webp"),
+		image: getAssetUrl("Ushape.png"),
 		measurementTip:
 			"Measure all three walls. Example: 10ft + 6ft + 10ft = 26 linear feet",
 	},
 	galley: {
 		label: "Galley",
 		description: "Two parallel walls",
-		image: getAssetUrl("double.webp"),
+		image: getAssetUrl("double.png"),
 		measurementTip:
 			"Measure both parallel walls. Example: 12ft + 12ft = 24 linear feet",
 	},
 	"single-wall": {
-		label: "Single Wall",
+		label: "Single Galley",
 		description: "Cabinets along one wall",
-		image: getAssetUrl("single.webp"),
+		image: getAssetUrl("single.png"),
 		measurementTip:
 			"Measure the full wall length. Example: 15ft = 15 linear feet",
 	},

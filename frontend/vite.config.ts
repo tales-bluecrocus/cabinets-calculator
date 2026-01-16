@@ -15,10 +15,10 @@ export default defineConfig({
 				mkdirSync(destDir, { recursive: true });
 
 				const images = [
-					"Lshape.webp",
-					"Ushape.webp",
-					"double.webp",
-					"single.webp",
+					"Lshape.png",
+					"Ushape.png",
+					"double.png",
+					"single.png",
 				];
 
 				images.forEach((img) => {

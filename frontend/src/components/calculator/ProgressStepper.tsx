@@ -39,16 +39,23 @@ export function ProgressStepper({
 							<div
 								className={cn(
 									"w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-sm md:text-base font-medium transition-colors",
-									isCompleted &&
+									(isCompleted || isActive) &&
 										"bg-primary text-primary-foreground",
 									isActive &&
-										"bg-primary text-primary-foreground ring-4 ring-primary/20",
+										stepNumber < totalSteps &&
+										"ring-4 ring-primary/20",
 									!isActive &&
 										!isCompleted &&
 										"bg-muted text-muted-foreground"
 								)}
 							>
-								{isCompleted ? "✓" : stepNumber}
+								{isCompleted
+									? "✓"
+									: isActive && stepNumber === totalSteps
+										? "✓"
+										: isActive
+											? "✓"
+											: stepNumber}
 							</div>
 							<span
 								className={cn(

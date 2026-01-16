@@ -324,6 +324,7 @@ export function StepIslandResults({
 							id="phone"
 							type="tel"
 							placeholder="(555) 123-4567"
+							value={customerInfo?.phone || ""}
 							maxLength={14}
 							onChange={(e) => {
 								// Format phone number: (XXX) XXX-XXXX
@@ -344,6 +345,12 @@ export function StepIslandResults({
 								else if (val.length > 0) val = `(${val}`;
 
 								setValue("customerInfo.phone", val);
+							}}
+							onKeyPress={(e) => {
+								// Only allow numbers
+								if (!/[0-9]/.test(e.key)) {
+									e.preventDefault();
+								}
 							}}
 						/>
 					</div>

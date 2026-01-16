@@ -247,6 +247,9 @@ function AppContent() {
 			});
 
 			if (result.success) {
+				// Move to step 4 to show completion
+				setCurrentStep(4);
+
 				// Scroll to top when showing thank you page
 				setTimeout(() => {
 					const cardElement = document.querySelector(
@@ -314,6 +317,16 @@ function AppContent() {
 							)}
 
 							{currentStep === 3 && (
+								<StepIslandResults
+									estimate={estimate}
+									onBack={handlePrevStep}
+									onEstimateUpdate={updateEstimate}
+									isSubmitting={isSubmitting}
+									submitStatus={submitStatus}
+								/>
+							)}
+
+							{currentStep === 4 && (
 								<StepIslandResults
 									estimate={estimate}
 									onBack={handlePrevStep}

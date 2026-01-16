@@ -31,7 +31,7 @@ $layout_labels = [
 	'l-shape' => 'L-Shaped',
 	'u-shape' => 'U-Shaped',
 	'galley' => 'Galley',
-	'single-wall' => 'Single Wall',
+	'single-wall' => 'Single Galley',
 	'other' => 'Other',
 ];
 ?>
